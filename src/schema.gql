@@ -63,6 +63,10 @@ type Query {
   persons(filters: ListPersonInput): [Person!]!
 }
 
+type Subscription {
+  hobbyCreated(name: String!): Hobby!
+}
+
 input UpdateHobbyInput {
   _id: String!
   name: String

@@ -23,6 +23,7 @@ import { AppService } from './app.service';
       sortSchema: true,
       playground: true,
       debug: false,
+      installSubscriptionHandlers: true,
     }),
     PersonModule,
     HobbyModule,

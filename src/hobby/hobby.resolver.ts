@@ -1,6 +1,6 @@
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Mutation, Query, Resolver, Subscription } from '@nestjs/graphql';
 import { Schema as MongooseSchema } from 'mongoose';
-
+import { PubSub } from 'graphql-subscriptions';
 import { Hobby } from './hobby.model';
 import { HobbyService } from './hobby.service';
 import {
@@ -12,7 +12,11 @@ import {
 
 @Resolver(() => Hobby)
 export class HobbyResolver {
-  constructor(private hobbyService: HobbyService) {}
+  private pubSub: PubSub;
+
+  constructor(private hobbyService: HobbyService) {
+    this.pubSub = new PubSub();
+  }
 
   @Query(() => Hobby)
   async hobby(
@@ -35,12 +39,15 @@ export class HobbyResolver {
 
   @Mutation(() => Hobby)
   async createHobby(@Args('payload') payload: CreateHobbyInput) {
-    return this.hobbyService.create(payload);
+    const hobby = await this.hobbyService.create(payload);
+    this.pubSub.publish('hobbyCreated', { hobbyCreated: hobby });
+    return hobby;
   }
 
   @Mutation(() => Hobby)
   async updateHobby(@Args('payload') payload: UpdateHobbyInput) {
-    return this.hobbyService.update(payload);
+    const hobby = await this.hobbyService.update(payload);
+    return hobby;
   }
 
   @Mutation(() => Hobby)
@@ -48,5 +55,15 @@ export class HobbyResolver {
     @Args('_id', { type: () => String }) _id: MongooseSchema.Types.ObjectId,
   ) {
     return this.hobbyService.delete(_id);
+  }
+
+  @Subscription(() => Hobby, {
+    filter: (payload, variables) => {
+      return payload.hobbyCreated.name === variables.name;
+    },
+  })
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  hobbyCreated(@Args('name') name: string) {
+    return this.pubSub.asyncIterator('hobbyCreated');
   }
 }

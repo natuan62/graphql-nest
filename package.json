@@ -28,6 +28,7 @@
     "@nestjs/platform-express": "^8.0.0",
     "apollo-server-express": "^3.6.1",
     "graphql": "^15.8.0",
+    "graphql-subscriptions": "^2.0.0",
     "graphql-tools": "^8.2.0",
     "graphql-type-json": "^0.3.2",
     "mongoose": "^6.1.6",
