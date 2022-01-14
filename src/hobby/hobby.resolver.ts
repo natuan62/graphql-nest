@@ -7,6 +7,7 @@ import {
   CreateHobbyInput,
   ListHobbyInput,
   UpdateHobbyInput,
+  HobbyFilters,
 } from './hobby.types';
 
 @Resolver(() => Hobby)
@@ -23,6 +24,13 @@ export class HobbyResolver {
   @Query(() => [Hobby])
   async hobbies(@Args('filters', { nullable: true }) filters?: ListHobbyInput) {
     return this.hobbyService.list(filters);
+  }
+
+  @Query(() => [Hobby])
+  async hobbiesWithFilters(
+    @Args('filters', { nullable: true }) filters?: HobbyFilters,
+  ) {
+    return this.hobbyService.listFilters(filters);
   }
 
   @Mutation(() => Hobby)

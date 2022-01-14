@@ -8,9 +8,9 @@ export class Hobby {
   @Field(() => String)
   _id: MongooseSchema.Types.ObjectId;
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   @Prop()
-  name: string;
+  name?: string;
 }
 
 export type HobbyDocument = Hobby & Document;

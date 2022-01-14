@@ -1,14 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Schema as MongooseSchema } from 'mongoose';
-
 import { Hobby, HobbyDocument } from './hobby.model';
 import {
   CreateHobbyInput,
   ListHobbyInput,
   UpdateHobbyInput,
 } from './hobby.types';
-
+import rawQueryToMongoose from '../utils/raw-query-to-mongoose';
 @Injectable()
 export class HobbyService {
   constructor(
@@ -25,8 +24,52 @@ export class HobbyService {
   }
 
   list(filters: ListHobbyInput) {
-    console.log('find filters', filters);
     return this.hobbyModel.find({ ...filters }).exec();
+  }
+
+  async listFilters(rawFilters: any) {
+    // query {
+    //   hobbiesWithFilters(filters:{
+    //     skip: 0
+    //     limit: 3
+    //     fields: {
+    //       name: true
+    //     }
+    //     sort: {
+    //       name: "asc"
+    //     }
+    //     where:{
+    //       name:{
+    //          in: ["a"]
+    //       }
+    //     }
+    //   }) {
+    //     _id
+    //     name
+    //   }
+    // }
+    const filters = rawQueryToMongoose(rawFilters);
+    const query = { ...filters.where };
+    const fields = filters.fields || null;
+    const ops: { [key: string]: any } = {};
+    if (filters.sort) {
+      ops.sort = filters.sort;
+    }
+    if (filters.skip) {
+      ops.skip = filters.skip;
+    }
+    if (filters.limit) {
+      ops.limit = filters.limit;
+    }
+    console.log('query', query);
+    console.log('fields', fields);
+    console.log('ops', ops);
+    try {
+      const result = await this.hobbyModel.find(query, fields, ops);
+      return result;
+    } catch (error) {
+      throw error;
+    }
   }
 
   update(payload: UpdateHobbyInput) {
