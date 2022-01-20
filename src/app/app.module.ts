@@ -11,7 +11,7 @@ import { AppService } from './app.service';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb+srv://nestjs.xxxxx.mongodb.net', {
+    MongooseModule.forRoot('mongodb+srv://nestjs.i9tzo.mongodb.net', {
       user: 'admin',
       pass: 'admin123',
       dbName: 'my-database',
