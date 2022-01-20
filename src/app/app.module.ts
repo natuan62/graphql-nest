@@ -1,22 +1,17 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 import { GraphQLModule } from '@nestjs/graphql';
 import { join } from 'path';
-
+import { DynamooseModule } from 'nestjs-dynamoose';
 import { PersonModule } from '../person/person.module';
-import { HobbyModule } from '../hobby/hobby.module';
-
+// import { HobbyModule } from '../hobby/hobby.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb+srv://nestjs.i9tzo.mongodb.net', {
-      user: 'admin',
-      pass: 'admin123',
-      dbName: 'my-database',
-      w: 'majority',
-      retryWrites: true,
+    DynamooseModule.forRoot({
+      local: 'http://localhost:8000',
+      aws: { region: 'us-west-2' },
     }),
     GraphQLModule.forRoot({
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
@@ -26,7 +21,7 @@ import { AppService } from './app.service';
       installSubscriptionHandlers: true,
     }),
     PersonModule,
-    HobbyModule,
+    // HobbyModule,
   ],
   controllers: [AppController],
   providers: [AppService],
