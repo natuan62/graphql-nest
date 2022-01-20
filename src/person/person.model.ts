@@ -1,24 +1,15 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Field, ObjectType } from '@nestjs/graphql';
-import { Document, Schema as MongooseSchema } from 'mongoose';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { CreatePersonInput } from './person.types';
 
-import { Hobby } from '../hobby/hobby.model';
+export type PersonKey = {
+  id: string;
+};
 
-@ObjectType()
-@Schema()
-export class Person {
-  @Field(() => String)
-  _id: MongooseSchema.Types.ObjectId;
+@ObjectType({ implements: CreatePersonInput })
+export class Person extends CreatePersonInput {
+  @Field(/* istanbul ignore next */ () => ID)
+  id: string;
 
-  @Field(() => String)
-  @Prop()
+  @Field(/* istanbul ignore next */ () => String)
   name: string;
-
-  @Field(() => [Hobby])
-  @Prop({ type: [MongooseSchema.Types.ObjectId], ref: Hobby.name })
-  hobbies: MongooseSchema.Types.ObjectId[] | Hobby[];
 }
-
-export type PersonDocument = Person & Document;
-
-export const PersonSchema = SchemaFactory.createForClass(Person);

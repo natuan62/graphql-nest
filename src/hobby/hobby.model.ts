@@ -16,3 +16,21 @@ export class Hobby {
 export type HobbyDocument = Hobby & Document;
 
 export const HobbySchema = SchemaFactory.createForClass(Hobby);
+
+// import { Schema } from 'dynamoose';
+
+// export const HobbySchema = new Schema(
+//   {
+//     id: {
+//       type: String,
+//       hashKey: true,
+//     },
+//     name: {
+//       type: String,
+//       required: true,
+//     },
+//   },
+//   {
+//     timestamps: true,
+//   },
+// );

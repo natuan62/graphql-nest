@@ -1,69 +1,21 @@
-import {
-  Args,
-  Mutation,
-  Parent,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql';
-import { Schema as MongooseSchema } from 'mongoose';
-
-import { Person, PersonDocument } from './person.model';
+import { Args, Mutation, Resolver, Query, ID } from '@nestjs/graphql';
+import { Person } from './person.model';
 import { PersonService } from './person.service';
-import {
-  CreatePersonInput,
-  ListPersonInput,
-  UpdatePersonInput,
-} from './person.types';
-import { Hobby } from '../hobby/hobby.model';
+import { CreatePersonInput } from './person.types';
 
 @Resolver(() => Person)
 export class PersonResolver {
-  constructor(private personService: PersonService) {}
+  constructor(private readonly personService: PersonService) {}
 
-  @Query(() => Person)
-  async person(
-    @Args('_id', { type: () => String }) _id: MongooseSchema.Types.ObjectId,
+  @Mutation(/* istanbul ignore next */ () => Person)
+  createPerson(@Args('payload') input: CreatePersonInput) {
+    return this.personService.create(input);
+  }
+
+  @Query(/* istanbul ignore next */ () => Person)
+  personById(
+    @Args('id', { type: /* istanbul ignore next */ () => ID }) id: string,
   ) {
-    return this.personService.getById(_id);
-  }
-
-  @Query(() => [Person])
-  async persons(
-    @Args('filters', { nullable: true }) filters?: ListPersonInput,
-  ) {
-    return this.personService.list(filters);
-  }
-
-  @Mutation(() => Person)
-  async createPerson(@Args('payload') payload: CreatePersonInput) {
-    return this.personService.create(payload);
-  }
-
-  @Mutation(() => Person)
-  async updatePerson(@Args('payload') payload: UpdatePersonInput) {
-    return this.personService.update(payload);
-  }
-
-  @Mutation(() => Person)
-  async deletePerson(
-    @Args('_id', { type: () => String }) _id: MongooseSchema.Types.ObjectId,
-  ) {
-    return this.personService.delete(_id);
-  }
-
-  @ResolveField()
-  async hobbies(
-    @Parent() person: PersonDocument,
-    @Args('populate') populate: boolean,
-  ) {
-    if (populate)
-      await person
-        .populate({ path: 'hobbies', model: Hobby.name })
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        .execPopulate();
-
-    return person.hobbies;
+    return { id };
   }
 }

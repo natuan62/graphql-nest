@@ -1,13 +1,16 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-
-import { Person, PersonSchema } from './person.model';
+import { DynamooseModule } from 'nestjs-dynamoose';
 import { PersonResolver } from './person.resolver';
+import { PersonSchema } from './person.schema';
 import { PersonService } from './person.service';
-
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Person.name, schema: PersonSchema }]),
+    DynamooseModule.forFeature([
+      {
+        name: 'person',
+        schema: PersonSchema,
+      },
+    ]),
   ],
   providers: [PersonResolver, PersonService],
 })
