@@ -27,11 +27,13 @@
     "@nestjs/mongoose": "^9.0.2",
     "@nestjs/platform-express": "^8.0.0",
     "apollo-server-express": "^3.6.1",
+    "dynamoose": "^2.8.5",
     "graphql": "^15.8.0",
     "graphql-subscriptions": "^2.0.0",
     "graphql-tools": "^8.2.0",
     "graphql-type-json": "^0.3.2",
     "mongoose": "^6.1.6",
+    "nestjs-dynamoose": "^0.3.3",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0"
