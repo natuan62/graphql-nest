@@ -1,4 +1,11 @@
-import { Args, Mutation, Resolver, Query, ID } from '@nestjs/graphql';
+import {
+  Args,
+  Mutation,
+  Resolver,
+  Query,
+  ID,
+  Subscription,
+} from '@nestjs/graphql';
 import { Person } from './person.model';
 import { PersonService } from './person.service';
 import {
@@ -6,14 +13,21 @@ import {
   PersonFilters,
   UpdatePersonInput,
 } from './person.types';
-import JSONObject, { GraphQLJSONObject } from 'graphql-type-json';
+import { GraphQLJSONObject } from 'graphql-type-json';
+import { PubSub } from 'graphql-subscriptions';
+
 @Resolver(() => Person)
 export class PersonResolver {
-  constructor(private readonly personService: PersonService) {}
+  private pubSub: PubSub;
+  constructor(private readonly personService: PersonService) {
+    this.pubSub = new PubSub();
+  }
 
   @Mutation(() => Person)
-  createPerson(@Args('payload') input: CreatePersonInput) {
-    return this.personService.create(input);
+  async createPerson(@Args('payload') payload: CreatePersonInput) {
+    const person = await this.personService.create(payload);
+    this.pubSub.publish('personCreated', { personCreated: person });
+    return person;
   }
 
   @Query(() => Person)
@@ -46,5 +60,15 @@ export class PersonResolver {
     @Args('id', { nullable: true, type: () => ID }) id: string,
   ) {
     return this.personService.delete({ id });
+  }
+
+  @Subscription(() => Person, {
+    filter: (payload, variables) => {
+      return payload.personCreated.name === variables.name;
+    },
+  })
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  personCreated(@Args('name') name: string) {
+    return this.pubSub.asyncIterator('personCreated');
   }
 }

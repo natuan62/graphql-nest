@@ -42,6 +42,10 @@ type Query {
   personByName(name: String!): [Person!]!
 }
 
+type Subscription {
+  personCreated(name: String!): Person!
+}
+
 input UpdatePersonInput {
   name: String
 }
