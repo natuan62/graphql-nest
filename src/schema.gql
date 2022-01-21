@@ -15,8 +15,10 @@ type Mutation {
 }
 
 type Person implements BasePerson {
+  createdAt: String!
   id: ID!
   name: String!
+  updatedAt: String!
 }
 
 type Query {

@@ -12,4 +12,10 @@ export class Person extends CreatePersonInput {
 
   @Field(/* istanbul ignore next */ () => String)
   name: string;
+
+  @Field(/* istanbul ignore next */ () => String)
+  updatedAt?: string;
+
+  @Field(/* istanbul ignore next */ () => String)
+  createdAt?: string;
 }
