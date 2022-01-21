@@ -24,3 +24,9 @@ export class PersonFilters {
   @Field(() => GraphQLJSONObject, { nullable: true })
   where?: object;
 }
+
+@InputType()
+export class UpdatePersonInput {
+  @Field(() => String, { nullable: true })
+  name?: string;
+}

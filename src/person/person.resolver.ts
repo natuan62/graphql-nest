@@ -1,7 +1,11 @@
 import { Args, Mutation, Resolver, Query, ID } from '@nestjs/graphql';
 import { Person } from './person.model';
 import { PersonService } from './person.service';
-import { CreatePersonInput, PersonFilters } from './person.types';
+import {
+  CreatePersonInput,
+  PersonFilters,
+  UpdatePersonInput,
+} from './person.types';
 
 @Resolver(() => Person)
 export class PersonResolver {
@@ -27,5 +31,18 @@ export class PersonResolver {
     @Args('filters', { nullable: true }) filters?: PersonFilters,
   ) {
     return this.personService.personByFilters(filters);
+  }
+
+  @Mutation(() => Person)
+  personUpdate(
+    @Args('id', { type: () => ID }) id: string,
+    @Args('payload') payload: UpdatePersonInput,
+  ) {
+    return this.personService.update({ id }, payload);
+  }
+
+  @Mutation(() => String)
+  personDelete(@Args('id', { type: () => ID }) id: string) {
+    return this.personService.delete({ id });
   }
 }

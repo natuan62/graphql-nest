@@ -17,6 +17,8 @@ scalar JSONObject @specifiedBy(url: "http://www.ecma-international.org/publicati
 
 type Mutation {
   createPerson(payload: CreatePersonInput!): Person!
+  personDelete(id: ID!): Boolean!
+  personUpdate(id: ID!, payload: UpdatePersonInput!): Person!
 }
 
 type Person implements BasePerson {
@@ -38,4 +40,8 @@ type Query {
   personByFilters(filters: PersonFilters): [Person!]!
   personById(id: ID!): Person!
   personByName(name: String!): [Person!]!
+}
+
+input UpdatePersonInput {
+  name: String
 }
