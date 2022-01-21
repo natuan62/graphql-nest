@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel, Model } from 'nestjs-dynamoose';
 import { Person, PersonKey } from './person.model';
-import { CreatePersonInput } from './person.types';
+import { CreatePersonInput, PersonFilters } from './person.types';
 import * as uuid from 'uuid';
 @Injectable()
 export class PersonService {
@@ -16,5 +16,22 @@ export class PersonService {
       id: uuid.v4(),
     });
     return createdPerson;
+  }
+
+  findById(id: PersonKey) {
+    return this.personModel.get(id);
+  }
+
+  personByName(name: string) {
+    const filters = {
+      name: {
+        eq: name,
+      },
+    };
+    return this.personModel.scan(filters).exec();
+  }
+
+  personByFilters(filters?: PersonFilters) {
+    return this.personModel.scan({ ...filters.where }).exec();
   }
 }
