@@ -44,6 +44,7 @@ export class PersonService {
   }
 
   async delete(key: PersonKey) {
-    return this.personModel.get(key);
+    const result = this.personModel.delete(key, { return: 'request' });
+    return result;
   }
 }

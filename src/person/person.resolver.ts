@@ -6,7 +6,7 @@ import {
   PersonFilters,
   UpdatePersonInput,
 } from './person.types';
-
+import JSONObject, { GraphQLJSONObject } from 'graphql-type-json';
 @Resolver(() => Person)
 export class PersonResolver {
   constructor(private readonly personService: PersonService) {}
@@ -41,8 +41,10 @@ export class PersonResolver {
     return this.personService.update({ id }, payload);
   }
 
-  @Mutation(() => String)
-  personDelete(@Args('id', { type: () => ID }) id: string) {
+  @Mutation(() => GraphQLJSONObject)
+  async personDelete(
+    @Args('id', { nullable: true, type: () => ID }) id: string,
+  ) {
     return this.personService.delete({ id });
   }
 }
